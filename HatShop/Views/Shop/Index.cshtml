@@ -1,10 +1,18 @@
-﻿
+﻿@model IEnumerable<HatShop.Data.Category>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Shop";
 }
 
-<h1>Index</h1>
-
-<a asp-controller="shop" asp-action="details" asp-route-id="1" asp-route-otherdata="tacos">View Product 1</a>
-<a asp-controller="shop" asp-action="details" asp-route-id="2">View Product 2</a>
-<a asp-controller="shop" asp-action="details" asp-route-id="3">View Product 2</a>
+@foreach (var category in this.Model)
+{
+    <h2 class="p-2 m-2 border rounded bg-dark text-light">@category.Name</h2>
+    <div class="row">
+        @foreach (var product in category.Products.Take(3))
+        {
+            <div class="col-12 col-sm-4 mx-2">
+                <img class="img-fluid" src="@(product.ProductImages.Any() ? product.ProductImages.First().Url : "/images/noImage.png")" alt="@(product.ProductImages.Any() && !string.IsNullOrEmpty(product.ProductImages.First().AltText) ? product.ProductImages.First().AltText : product.Name)" />
+                <a class="btn btn-block btn-primary" asp-controller="shop" asp-action="details" asp-route-id="@product.ID">View @product.Name</a>
+            </div>
+        }
+    </div>
+}
