@@ -15,6 +15,7 @@ namespace HatShop.Controllers
 
         public IActionResult Details(int? id)
         {
+            ViewData["ID"] = id;
             return View();
         }
 
