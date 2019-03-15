@@ -22,21 +22,23 @@ namespace HatShop.Models
         public string ContactEmail { get; set; }
 
         [Phone]
-        [RegularExpression(@"^([\+]?[0-9]{1,3}[\s.-][0-9]{1,12})([\s.-]?[0-9]{1,4}?)$")]
         public string ContactPhoneNumber { get; set; }
 
+        [Required]
         public string ShippingStreet1 { get; set; }
 
         public string ShippingStreet2 { get; set; }
 
+        [Required]
         public string ShippingCity { get; set; }
 
+        [Required]
         public string ShippingRegion { get; set; }
 
-        public string ShippingLocale { get; set; }
-
+        [Required]
         public string ShippingCountry { get; set; }
 
+        [Required]
         public string ShippingPostalCode { get; set; }
 
     }

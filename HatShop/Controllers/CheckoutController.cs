@@ -24,7 +24,6 @@ namespace HatShop.Controllers
 
                 return RedirectToAction("index", "receipt");
             }
-            ModelState.AddModelError("SomethingElse", "We don't like you, either");
             return View(model);
         }
     }

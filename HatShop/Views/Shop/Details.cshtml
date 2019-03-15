@@ -6,7 +6,7 @@
     <div class="col-12 col-sm-4">
         <img class="img-fluid" src="@(Model.ProductImages.Any() ? Model.ProductImages.First().Url : "/images/noImage.png")" alt="@(Model.ProductImages.Any() && !string.IsNullOrEmpty(Model.ProductImages.First().AltText) ? Model.ProductImages.First().AltText : Model.Name)" />
     </div>
-    <div class="col-12 col-sm-8 p-2 border rounded bg-dark text-light">
+    <div class="col-12 col-sm-8 p-2 bg-light text-dark">
 
         <div class="row">
             <div class="col">
@@ -38,7 +38,7 @@
                     </select>
                 </div>
             </div>
-            <input class="btn btn-light btn-block my-2" type="submit" value="Add To Cart" />
+            <input class="btn btn-secondary btn-block my-2" type="submit" value="Add To Cart" />
         </form>
     </div>
 </div>
