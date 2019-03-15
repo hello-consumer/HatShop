@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HatShop.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HatShop.Controllers
@@ -14,12 +15,17 @@ namespace HatShop.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(string email)
+        public IActionResult Index(CheckoutViewModel model)
         {
-            Console.WriteLine("Processing an order from " + email);
-            //TODO: Get a lot more info here, validate credit card + address, save it to a database
+            if (this.ModelState.IsValid)
+            {
+                Console.WriteLine("Processing an order from " + model.ContactEmail);
+                //TODO: Get a lot more info here, validate credit card + address, save it to a database
 
-            return RedirectToAction("index", "receipt");
+                return RedirectToAction("index", "receipt");
+            }
+            ModelState.AddModelError("SomethingElse", "We don't like you, either");
+            return View(model);
         }
     }
 }

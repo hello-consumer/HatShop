@@ -1,13 +1,36 @@
-﻿
+﻿@model CheckoutViewModel
 @{
     ViewData["Title"] = "Checkout";
 }
 
 <h1>Checkout</h1>
+
+
+@if (this.ViewContext.ModelState.Select(x => x.Value.Errors).Count() > 0)
+{
+    <div class="alert alert-danger">
+        @Html.ValidationSummary(false)
+    </div>
+}
+
+
+
 <form method="post">
-    <label for="email">Your Email
-    </label>
-    <input type="email" name="email" placeholder="you@domain" required />
-    <input type="submit" value="Place Order" />
+    <div class="form-group">
+        <label asp-for="ContactEmail"></label>
+        <input type="email" asp-for="ContactEmail" placeholder="you@domain" required class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ContactName"></label>
+        <input type="text" asp-for="ContactName" placeholder="Bill Customer" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ContactPhoneNumber"></label>
+        <input type="tel" asp-for="ContactPhoneNumber" placeholder="1-773-111-1111" required class="form-control" />
+    </div>
+
+    <input type="submit" value="Place Order" class="btn btn-block btn-primary" />
 
 </form>

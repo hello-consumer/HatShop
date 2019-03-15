@@ -48,7 +48,9 @@ public static class MockShopData
             ID = 2,
             Name = "Stetson Hats",
             Description = "These are old-timey!",
-            BannerImageUrl = "/image/stetsonBanner.jpg"},
+            BannerImageUrl = "/image/stetsonBanner.jpg",
+            Products = { new Product { ID = 2, Name = "Old Hat" } }
+        },
         new Category {
             ID = 3,
             Name = "Knit Hats",
