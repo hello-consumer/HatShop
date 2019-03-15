@@ -20,7 +20,7 @@
 
 
 
-    <form method="post">
+    <form method="post" onsubmit="validate(event, this)" novalidate>
         <div class="row">
             <div class="col-12 col-sm-6">
                 <fieldset class="p-2 m-2 bg-light">
@@ -32,7 +32,7 @@
 
                     <div class="form-group">
                         <label asp-for="ContactName"></label>
-                        <input type="text" asp-for="ContactName" placeholder="Bill Customer" class="form-control" />
+                        <input type="text" asp-for="ContactName" placeholder="Bill Customer" required class="form-control" />
                     </div>
 
                     <div class="form-group">
@@ -136,7 +136,16 @@
                 <input type="submit" value="Place Order" class="btn btn-block btn-secondary" />
             </div>
         </div>
-        
-        
-
     </form>
+
+@section Scripts{ 
+    <script type="text/javascript">
+        function validate(event, form) {
+            if (form.checkValidity() === false) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }
+    </script>
+}
