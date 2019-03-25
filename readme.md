@@ -16,3 +16,5 @@ The HatShop Application is built using ASP.Net Core 2.1 and uses libraries like 
 The ABCReport controller is configured to communicate with a database with the ABC Manufacturing Database Schema.  The connection string must be set prior to using the report.  From the command line:
 
 `dotnet user-secrets set "ConnectionStrings:ABCConnection" "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ABC;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"`
+
+💯 
