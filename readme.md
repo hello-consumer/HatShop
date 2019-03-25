@@ -5,12 +5,11 @@
 The HatShop Application is built using ASP.Net Core 2.1 and uses libraries like Bootstrap 4.1.3 and EntityFramework Core 2.  It is an E-commerce Application designed to demonstrate ASP.Net Core fundamental concepts.
 
 ## Getting Started
-
-- [] Clone the application from GitHub.
-- [] Download and Install Visual Studio Community and Configure for the DotNetCore Development workspace.
-- [] Make sure to download the .NET Core 2.1 SDK or runtime libraries
-- [] Double Click the .sln file to open the project
-- [] Hit "Play" to run
+- Clone the application from GitHub.
+- Download and Install Visual Studio Community and Configure for the DotNetCore Development workspace.
+- Make sure to download the .NET Core 2.1 SDK or runtime libraries
+- Double Click the .sln file to open the project
+- Hit "Play" to run
 
 ## Connection String Initialization
 
