@@ -1,26 +1,5 @@
 GO
 
-CREATE TABLE [dbo].[Address](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[Street] [nvarchar](100) NOT NULL,
-	[City] [nvarchar](100) NOT NULL,
-	[State] [nvarchar](100) NOT NULL,
-	[ZipCode] [nvarchar](20) NOT NULL,
-	[CustomerID] [int] NOT NULL,
- CONSTRAINT [PK_Address] PRIMARY KEY CLUSTERED 
-(
-	[ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-ALTER TABLE [dbo].[Address]  WITH CHECK ADD  CONSTRAINT [FK_Address_Customer] FOREIGN KEY([CustomerID])
-REFERENCES [dbo].[Customer] ([ID])
-GO
-
-ALTER TABLE [dbo].[Address] CHECK CONSTRAINT [FK_Address_Customer]
-GO
-
 CREATE TABLE [dbo].[Customer](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[SalutationTitle] [nvarchar](100) NULL,
@@ -42,6 +21,28 @@ GO
 
 ALTER TABLE [dbo].[Customer] ADD  DEFAULT ((0)) FOR [DiscountPercent]
 GO
+
+CREATE TABLE [dbo].[Address](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Street] [nvarchar](100) NOT NULL,
+	[City] [nvarchar](100) NOT NULL,
+	[State] [nvarchar](100) NOT NULL,
+	[ZipCode] [nvarchar](20) NOT NULL,
+	[CustomerID] [int] NOT NULL,
+ CONSTRAINT [PK_Address] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Address]  WITH CHECK ADD  CONSTRAINT [FK_Address_Customer] FOREIGN KEY([CustomerID])
+REFERENCES [dbo].[Customer] ([ID])
+GO
+
+ALTER TABLE [dbo].[Address] CHECK CONSTRAINT [FK_Address_Customer]
+GO
+
 
 
 
