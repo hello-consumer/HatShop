@@ -4,32 +4,38 @@ using System.Linq;
 using System.Threading.Tasks;
 using HatShop.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HatShop.Controllers
 {
-    
-
     public class ShopController : Controller
     {
+        private ApplicationDbContext _context;
+
+        public ShopController(ApplicationDbContext context)
+        {
+            this._context = context;
+        }
+
+
         public IActionResult Index()
         {
-            return View(MockShopData.categories);
+            //If my database's categories table is empty, add mock data here:
+            if (!_context.Categories.Any())
+            {
+                _context.Categories.AddRange(MockShopData.categories);
+                _context.SaveChanges();
+            }
+
+            //Instead of returning mock category data, return the DbContext's Categories property
+            return View(_context.Categories.Include(x => x.Products).ThenInclude(x => x.ProductImages));
         }
 
         public IActionResult Details(int? id)
         {
-            Product productToFind = null;
-            foreach(var category in MockShopData.categories)
-            {
-                foreach(var product in category.Products)
-                {
-                    if(product.ID == id)
-                    {
-                        productToFind = product;
-                    }
-                }
-            }
-            
+            Product productToFind = _context.Products.Find(id);
+
+
             return View(productToFind);
         }
 
