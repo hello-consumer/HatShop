@@ -1,8 +1,22 @@
-﻿
+﻿@model HatShop.Data.Cart
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>This is Your Cart</h1>
+@if(Model != null && Model.CartItems.Count > 0)
+{
+<ul>
+    @foreach (var item in Model.CartItems)
+    {
+        <li>@item.Product.Name, @(item.ProductSize == null ? "One Size Fits All" : item.ProductSize.Size), @(item.ProductColor == null ? "N/A" : item.ProductColor.Color) </li>
+    }
+</ul>
+}
+else
+{
+    <div class="alert alert-warning"> Your Cart is Empty </div>
+}
+
 <a asp-action="index" asp-controller="shop" class="btn btn-secondary">Go Shop some more</a>
 <a asp-action="index" asp-controller="checkout" class="btn btn-primary">Proceed to Checkout</a>

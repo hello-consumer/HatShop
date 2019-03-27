@@ -2,25 +2,39 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HatShop.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HatShop.Controllers
 {
     public class CartController : Controller
     {
+        private ApplicationDbContext _context;
+
+        public CartController(ApplicationDbContext context)
+        {
+            this._context = context;
+        }
+
         public IActionResult Index()
         {
-
             string cookieData = Request.Cookies.ContainsKey("HatShopCartInfo") ? Request.Cookies["HatShopCartInfo"] : null;
-            if (!string.IsNullOrEmpty(cookieData))
+            Cart cart = null;
+            Guid cookieIdentifier;
+            if (Guid.TryParse(cookieData, out cookieIdentifier))
             {
-                string[] parts = cookieData.Split("|");
-                int productId = int.Parse(parts[0]);
-                int colorId = int.Parse(parts[1]);
-                int sizeId = int.Parse(parts[2]);
+                cart = _context.Carts
+                        .Include(c => c.CartItems)
+                        .ThenInclude(ci => ci.Product)
+                        .ThenInclude(p => p.ProductColors)
+                        .Include(c => c.CartItems)
+                        .ThenInclude(ci => ci.Product)
+                        .ThenInclude(p => p.ProductSizes)
+                        .FirstOrDefault(c => c.CookieIdentifier == cookieIdentifier);
             }
 
-            return View();
+            return View(cart);
         }
     }
 }
