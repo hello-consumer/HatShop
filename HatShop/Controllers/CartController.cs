@@ -36,5 +36,22 @@ namespace HatShop.Controllers
 
             return View(cart);
         }
+
+        [HttpPost]
+        public IActionResult Index(int cartItemId, int quantity)
+        {
+            CartItem cartItem = _context.CartItems.Find(cartItemId);
+            cartItem.Quantity = quantity;
+
+            if(quantity == 0)
+            {
+                _context.CartItems.Remove(cartItem);
+            }
+
+            _context.SaveChanges();
+
+
+            return RedirectToAction("index");
+        }
     }
 }

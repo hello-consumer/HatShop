@@ -4,14 +4,48 @@
 }
 
 <h1>This is Your Cart</h1>
-@if(Model != null && Model.CartItems.Count > 0)
+@if (Model != null && Model.CartItems.Count > 0)
 {
-<ul>
-    @foreach (var item in Model.CartItems)
-    {
-        <li>@item.Product.Name, @(item.ProductSize == null ? "One Size Fits All" : item.ProductSize.Size), @(item.ProductColor == null ? "N/A" : item.ProductColor.Color) </li>
-    }
-</ul>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Size</th>
+            <th>Color</th>
+            <th>Unit Price</th>
+            <th>Line Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CartItems)
+        {
+            <tr>
+                <td>
+                    @item.Product.Name
+                </td>
+                <td>
+                    <form class="form-row" method="post">
+                        <input type="hidden" value="@item.ID" name="cartItemId" />
+                        <input class="col form-control" type="number" name="quantity" value="@item.Quantity" min="0" />
+                        <input type="submit" class="col btn btn-secondary" value="Update" />
+                        <button class="col btn btn-danger" onclick="removeProduct(event)">Remove</button>
+                    </form>
+                </td>
+                <td>@(item.ProductSize == null ? "One Size Fits All" : item.ProductSize.Size)</td>
+                <td>@(item.ProductColor == null ? "N/A" : item.ProductColor.Color)</td>
+                <td>@item.Product.Price.ToString("c")</td>
+                <td>@((item.Product.Price * item.Quantity).ToString("c"))</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="5">Total</th>
+            <th>@Model.CartItems.Sum(item => item.Quantity * item.Product.Price).ToString("c")</th>
+        </tr>
+    </tfoot>
+</table>
 }
 else
 {
@@ -19,4 +53,16 @@ else
 }
 
 <a asp-action="index" asp-controller="shop" class="btn btn-secondary">Go Shop some more</a>
-<a asp-action="index" asp-controller="checkout" class="btn btn-primary">Proceed to Checkout</a>
+@if (Model != null && Model.CartItems.Count > 0)
+{
+    <a asp-action="index" asp-controller="checkout" class="btn btn-primary">Proceed to Checkout</a>
+}
+
+@section Scripts{ 
+<script>
+    function removeProduct(event) {
+        event.target.parentNode.querySelector('input[type=number]').value = 0;
+        
+    }
+</script>
+}
