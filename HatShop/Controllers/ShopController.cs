@@ -33,7 +33,12 @@ namespace HatShop.Controllers
 
         public IActionResult Details(int? id)
         {
-            Product productToFind = _context.Products.Find(id);
+            Product productToFind = _context.Products
+                .Include(product => product.Reviews)
+                .Include(product => product.ProductSizes)
+                .Include(product => product.ProductColors)
+                .Include(product => product.ProductImages)
+                .Include(product => product.Category).Single(product => product.ID == id);
 
 
             return View(productToFind);
