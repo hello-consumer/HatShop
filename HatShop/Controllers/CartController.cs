@@ -53,5 +53,23 @@ namespace HatShop.Controllers
 
             return RedirectToAction("index");
         }
+
+        public IActionResult Count()
+        {
+            string cookieData = Request.Cookies.ContainsKey("HatShopCartInfo") ? Request.Cookies["HatShopCartInfo"] : null;
+            Cart cart = null;
+            Guid cookieIdentifier;
+            if (Guid.TryParse(cookieData, out cookieIdentifier))
+            {
+                cart = _context.Carts
+                        .Include(c => c.CartItems)
+                        .FirstOrDefault(c => c.CookieIdentifier == cookieIdentifier);
+            }
+            if(cart == null)
+            {
+                return Json(0);
+            }
+            return Json(cart.CartItems.Sum(x => x.Quantity));
+        }
     }
 }
