@@ -1,4 +1,4 @@
-# HatShop
+﻿# HatShop
 
 ## Overview
 
@@ -18,3 +18,21 @@ The ABCReport controller is configured to communicate with a database with the A
 `dotnet user-secrets set "ConnectionStrings:ABCConnection" "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ABC;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"`
 
 💯 
+
+## Data Initialization
+
+###
+`dotnet ef database update`
+This will deploy the latest schema to the DefaultConnection connecting string
+
+### Adding Roles
+`dotnet HatShop.dll createroles`
+This will automatically create Administrator, ProductManager and MarketingManager in the database
+
+### Add user to Roles
+`dotnet HatShop.dll assignusertorole [USERNAME] [ROLENAME]`
+Adds a registered user to the role
+
+### Adding Mock Data
+`dotnet HatShop.dll addproducts`
+This will add sample products, categories, and reviews

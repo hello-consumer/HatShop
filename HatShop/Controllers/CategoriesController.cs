@@ -6,9 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HatShop.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HatShop.Controllers
 {
+    //using Microsoft.AspNetCore.Authorization
+    //This says that all of the methods in this controller require
+    //that the user be logged in
+
+    [Authorize(Roles = "Administrator")]
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;

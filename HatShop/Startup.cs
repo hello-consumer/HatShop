@@ -49,6 +49,7 @@ namespace HatShop
                     Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDefaultIdentity<HatUser>()
+                .AddRoles<IdentityRole>()   //Turn on Role Support
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 

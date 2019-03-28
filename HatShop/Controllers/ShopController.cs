@@ -20,13 +20,6 @@ namespace HatShop.Controllers
 
         public IActionResult Index()
         {
-            //If my database's categories table is empty, add mock data here:
-            if (!_context.Categories.Any())
-            {
-                _context.Categories.AddRange(MockShopData.categories);
-                _context.SaveChanges();
-            }
-
             //Instead of returning mock category data, return the DbContext's Categories property
             return View(_context.Categories.Include(x => x.Products).ThenInclude(x => x.ProductImages));
         }

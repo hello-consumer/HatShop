@@ -17,7 +17,6 @@
     },
     "HatShop": {
       "commandName": "Project",
-      "commandLineArgs": "-m \"Hello World\"",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
