@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HatShop.Data;
 using HatShop.Models;
 using HatShop.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,10 +14,12 @@ namespace HatShop.Controllers
     public class CheckoutController : Controller
     {
         private ApplicationDbContext _context;
+        private UserManager<HatUser> _userManager;
 
-        public CheckoutController(ApplicationDbContext context)
+        public CheckoutController(ApplicationDbContext context, UserManager<HatUser> userManager)
         {
             this._context = context;
+            this._userManager = userManager;
         }
 
         public IActionResult Index()
@@ -27,9 +30,14 @@ namespace HatShop.Controllers
         [HttpPost]
         public IActionResult Index(CheckoutViewModel model)
         {
+            
             if (this.ModelState.IsValid)
             {
-                Cart cart = CartService.GetCart(Request, _context, Response);
+                HatUser hatUser = null;
+                if (User.Identity.IsAuthenticated) {
+                    hatUser = _userManager.FindByNameAsync(User.Identity.Name).Result;
+                }
+                Cart cart = CartService.GetCart(_context, Request, Response, hatUser);
 
                 if (cart.CartItems.Count > 0)
                 {
@@ -63,6 +71,11 @@ namespace HatShop.Controllers
                     _context.Carts.Remove(cart);
                     Response.Cookies.Delete("HatShopCartInfo");
                     _context.Orders.Add(order);
+                    if (hatUser != null)
+                    {
+                        order.HatUser = hatUser;
+                    }
+
                     _context.SaveChanges();
 
                     return RedirectToAction("index", "receipt", new { id = order.ID });

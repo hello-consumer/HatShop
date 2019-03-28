@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HatShop.Data;
 using HatShop.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,12 +12,15 @@ namespace HatShop.Controllers
 {
     public class ShopController : Controller
     {
-        private ApplicationDbContext _context;
+private ApplicationDbContext _context;
 
-        public ShopController(ApplicationDbContext context)
-        {
-            this._context = context;
-        }
+private UserManager<HatUser> _userManager;
+
+public ShopController(ApplicationDbContext context, UserManager<HatUser> userManager)
+{
+    this._context = context;
+    this._userManager = userManager;
+}
 
 
         public IActionResult Index()
@@ -41,7 +45,12 @@ namespace HatShop.Controllers
         [HttpPost]
         public IActionResult Details(int id, int color, int size)
         {
-            Cart cart = CartService.GetCart(this.Request, _context, this.Response);
+HatUser hatUser = null;
+if (User.Identity.IsAuthenticated)
+{
+    hatUser = _userManager.FindByNameAsync(User.Identity.Name).Result;
+}
+            Cart cart = CartService.GetCart(_context, this.Request, this.Response, hatUser);
 
             //If the user has previously added this item to the cart, try to find it:
             CartItem item = cart.CartItems

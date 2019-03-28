@@ -1,4 +1,18 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using HatShop.Data
+@using HatShop.Services
+@inject UserManager<HatUser> _UserManager
+@inject ApplicationDbContext _Context
+@{
+    HatUser hatUser = null;
+    if (User.Identity.IsAuthenticated)
+    {
+        hatUser = _UserManager.FindByNameAsync(User.Identity.Name).Result;
+    }
+    Cart cart = CartService.GetCart(_Context, this.Context.Request, this.Context.Response, hatUser);
+}
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -31,7 +45,7 @@
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="About">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">Cart <span class="badge badge-secondary cart-count">0</span></a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">Cart <span class="badge badge-secondary cart-count">@cart.CartItems.Sum(x => x.Quantity)</span></a>
                     </li>
                 </ul>
             </div>
