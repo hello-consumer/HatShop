@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HatShop.Data;
+using HatShop.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,44 +41,17 @@ namespace HatShop.Controllers
         [HttpPost]
         public IActionResult Details(int id, int color, int size)
         {
-            //Start with an empty cart
-            Cart cart = null;
-            //If the user has a previous cart cookie, try to use that cart:
-            if (Request.Cookies.ContainsKey("HatShopCartInfo"))
-            {
-                Guid cookieIdentifier;
-                if(Guid.TryParse(Request.Cookies["HatShopCartInfo"], out cookieIdentifier))
-                {
-                    cart = _context.Carts
-                        .Include(c => c.CartItems)
-                        .ThenInclude(ci => ci.Product)
-                        .ThenInclude(p => p.ProductColors)
-                        .Include(c => c.CartItems)
-                        .ThenInclude(ci => ci.Product)
-                        .ThenInclude(p => p.ProductSizes)
-                        .FirstOrDefault(c => c.CookieIdentifier == cookieIdentifier);
-                }
-            }
-
-            //If you couldn't use the cart cookie, create a new empty cart
-            //and add the cookie ID to the response
-            if(cart == null)
-            {
-                cart = new Cart();
-                cart.CookieIdentifier = Guid.NewGuid();
-                Response.Cookies.Append("HatShopCartInfo", cart.CookieIdentifier.ToString());
-                _context.Carts.Add(cart);
-            }
+            Cart cart = CartService.GetCart(this.Request, _context, this.Response);
 
             //If the user has previously added this item to the cart, try to find it:
             CartItem item = cart.CartItems
-                .FirstOrDefault(ci => ci.ProductID == id && 
-                ci.ProductColor.ID == color && 
+                .FirstOrDefault(ci => ci.ProductID == id &&
+                ci.ProductColor.ID == color &&
                 ci.ProductSize.ID == size);
 
             //Otherwise, this is the first time this product has been added
             //Create a new line item and look up details from the Product table
-            if(item == null)
+            if (item == null)
             {
                 Product product = _context.Products
                     .Include(p => p.ProductSizes)
@@ -104,5 +78,7 @@ namespace HatShop.Controllers
             //the cart cookie to fetch the cart.
             return RedirectToAction("Index", "Cart");
         }
+
+        
     }
 }
