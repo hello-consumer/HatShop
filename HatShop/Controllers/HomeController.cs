@@ -40,13 +40,13 @@ namespace HatShop.Controllers
             }
         }
 
-        public IActionResult Stocks()
+        public async Task<IActionResult> Stocks()
         {
             string endpoint = "https://api.iextrading.com/1.0/ref-data/symbols";
             try
             {
                 System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
-                string response = httpClient.GetStringAsync(endpoint).Result;
+                string response = await httpClient.GetStringAsync(endpoint);
                 var typedResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Newtonsoft.Json.Linq.JObject>>(response);
                 var stocks = typedResponse.Select(stock => new Stock
                 {
