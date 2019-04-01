@@ -9,18 +9,22 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace HatShop.Controllers
 {
-    public class CheckoutController : Controller
-    {
-        private ApplicationDbContext _context;
-        private UserManager<HatUser> _userManager;
+public class CheckoutController : Controller
+{
+    private ApplicationDbContext _context;
+    private UserManager<HatUser> _userManager;
+    private FluentEmail.Mailgun.MailgunSender _mailgunSender;
 
-        public CheckoutController(ApplicationDbContext context, UserManager<HatUser> userManager)
-        {
-            this._context = context;
-            this._userManager = userManager;
-        }
+    public CheckoutController(ApplicationDbContext context, UserManager<HatUser> userManager
+        , FluentEmail.Mailgun.MailgunSender mailgunSender)
+    {
+        this._context = context;
+        this._userManager = userManager;
+        this._mailgunSender = mailgunSender;
+    }
 
         public IActionResult Index()
         {
@@ -28,7 +32,7 @@ namespace HatShop.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(CheckoutViewModel model)
+        public async Task<IActionResult> Index(CheckoutViewModel model)
         {
             
             if (this.ModelState.IsValid)
@@ -77,6 +81,11 @@ namespace HatShop.Controllers
                     }
 
                     _context.SaveChanges();
+                    FluentEmail.Core.Email email = new FluentEmail.Core.Email("owner@hatshop.codingtemple.com", "HatShop Owner");
+                    email.To(model.ContactEmail);
+                    email.Subject("Receipt for order #" + order.ID);
+                    email.Body("Thanks for your order!");
+                    var response = await _mailgunSender.SendAsync(email);
 
                     return RedirectToAction("index", "receipt", new { id = order.ID });
                 }

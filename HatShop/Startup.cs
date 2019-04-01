@@ -46,6 +46,11 @@ namespace HatShop
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddTransient((s) =>
+            {
+                return new FluentEmail.Mailgun.MailgunSender(Configuration.GetValue<string>("MailGun:Domain"), Configuration.GetValue<string>("MailGun:Key"));
+            });
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
@@ -54,6 +59,9 @@ namespace HatShop
                 .AddRoles<IdentityRole>()   //Turn on Role Support
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+
 
 
             services.AddTransient(serviceProvider =>
