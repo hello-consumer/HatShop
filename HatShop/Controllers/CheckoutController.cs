@@ -8,22 +8,24 @@ using HatShop.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using SendGrid;
 
 namespace HatShop.Controllers
 {
-public class CheckoutController : Controller
-{
-    private ApplicationDbContext _context;
-    private UserManager<HatUser> _userManager;
-    private FluentEmail.Mailgun.MailgunSender _mailgunSender;
-
-    public CheckoutController(ApplicationDbContext context, UserManager<HatUser> userManager
-        , FluentEmail.Mailgun.MailgunSender mailgunSender)
+    public class CheckoutController : Controller
     {
-        this._context = context;
-        this._userManager = userManager;
-        this._mailgunSender = mailgunSender;
+        private ApplicationDbContext _context;
+        private UserManager<HatUser> _userManager;
+        private FluentEmail.Mailgun.MailgunSender _mailgunSender;
+        private ISendGridClient _sendGridClient;
+
+        public CheckoutController(ApplicationDbContext context, UserManager<HatUser> userManager
+        , FluentEmail.Mailgun.MailgunSender mailgunSender, SendGrid.ISendGridClient sendGridClient)
+        {
+            this._context = context;
+            this._userManager = userManager;
+            this._mailgunSender = mailgunSender;
+            this._sendGridClient = sendGridClient;
     }
 
         public IActionResult Index()
@@ -34,11 +36,12 @@ public class CheckoutController : Controller
         [HttpPost]
         public async Task<IActionResult> Index(CheckoutViewModel model)
         {
-            
+
             if (this.ModelState.IsValid)
             {
                 HatUser hatUser = null;
-                if (User.Identity.IsAuthenticated) {
+                if (User.Identity.IsAuthenticated)
+                {
                     hatUser = _userManager.FindByNameAsync(User.Identity.Name).Result;
                 }
                 Cart cart = CartService.GetCart(_context, Request, Response, hatUser);
@@ -81,11 +84,21 @@ public class CheckoutController : Controller
                     }
 
                     _context.SaveChanges();
-                    FluentEmail.Core.Email email = new FluentEmail.Core.Email("owner@hatshop.codingtemple.com", "HatShop Owner");
-                    email.To(model.ContactEmail);
-                    email.Subject("Receipt for order #" + order.ID);
-                    email.Body("Thanks for your order!");
-                    var response = await _mailgunSender.SendAsync(email);
+                    //FluentEmail.Core.Email email = new FluentEmail.Core.Email("owner@hatshop.codingtemple.com", "HatShop Owner");
+                    //email.To(model.ContactEmail);
+                    //email.Subject("Receipt for order #" + order.ID);
+                    //email.Body("Thanks for your order!");
+                    //var response = await _mailgunSender.SendAsync(email);
+                    var msg = new SendGrid.Helpers.Mail.SendGridMessage()
+                    {
+                        From = new SendGrid.Helpers.Mail.EmailAddress("owner@hatshop.codingtemple.com", "HatShop Owner"),
+                        Subject = "Receipt for order #" + order.ID,
+                        PlainTextContent = "Thanks for your order!",
+                        HtmlContent = "Thanks for your order!"
+                    };
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(model.ContactEmail));
+                    msg.SetClickTracking(false, false);
+                    await _sendGridClient.SendEmailAsync(msg);
 
                     return RedirectToAction("index", "receipt", new { id = order.ID });
                 }

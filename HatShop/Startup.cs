@@ -51,6 +51,11 @@ namespace HatShop
                 return new FluentEmail.Mailgun.MailgunSender(Configuration.GetValue<string>("MailGun:Domain"), Configuration.GetValue<string>("MailGun:Key"));
             });
 
+            services.AddTransient<SendGrid.ISendGridClient>((s) =>
+            {
+                return new SendGrid.SendGridClient(Configuration.GetValue<string>("SendGrid:Key"));
+            });
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
