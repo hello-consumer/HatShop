@@ -15,6 +15,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using HatShop.Services;
+using Microsoft.Extensions.Logging;
 
 namespace HatShop
 {
@@ -56,11 +59,18 @@ namespace HatShop
                 return new SendGrid.SendGridClient(Configuration.GetValue<string>("SendGrid:Key"));
             });
 
+            services.AddTransient<IEmailSender>((s) => { return new EmailService(
+                s.GetService<FluentEmail.Mailgun.MailgunSender>(),
+                s.GetService<SendGrid.ISendGridClient>(),
+                s.GetService<ILogger<EmailService>>()
+                );
+            });
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<HatUser>()
+            services.AddDefaultIdentity<HatUser>((config) => { config.SignIn.RequireConfirmedEmail = true; })
                 .AddRoles<IdentityRole>()   //Turn on Role Support
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();

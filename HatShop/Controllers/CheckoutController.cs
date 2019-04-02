@@ -6,6 +6,7 @@ using HatShop.Data;
 using HatShop.Models;
 using HatShop.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SendGrid;
@@ -16,17 +17,15 @@ namespace HatShop.Controllers
     {
         private ApplicationDbContext _context;
         private UserManager<HatUser> _userManager;
-        private FluentEmail.Mailgun.MailgunSender _mailgunSender;
-        private ISendGridClient _sendGridClient;
+        private IEmailSender _emailSender;
 
         public CheckoutController(ApplicationDbContext context, UserManager<HatUser> userManager
-        , FluentEmail.Mailgun.MailgunSender mailgunSender, SendGrid.ISendGridClient sendGridClient)
+        , IEmailSender emailSender)
         {
             this._context = context;
             this._userManager = userManager;
-            this._mailgunSender = mailgunSender;
-            this._sendGridClient = sendGridClient;
-    }
+            this._emailSender = emailSender;
+        }
 
         public IActionResult Index()
         {
@@ -84,21 +83,7 @@ namespace HatShop.Controllers
                     }
 
                     _context.SaveChanges();
-                    //FluentEmail.Core.Email email = new FluentEmail.Core.Email("owner@hatshop.codingtemple.com", "HatShop Owner");
-                    //email.To(model.ContactEmail);
-                    //email.Subject("Receipt for order #" + order.ID);
-                    //email.Body("Thanks for your order!");
-                    //var response = await _mailgunSender.SendAsync(email);
-                    var msg = new SendGrid.Helpers.Mail.SendGridMessage()
-                    {
-                        From = new SendGrid.Helpers.Mail.EmailAddress("owner@hatshop.codingtemple.com", "HatShop Owner"),
-                        Subject = "Receipt for order #" + order.ID,
-                        PlainTextContent = "Thanks for your order!",
-                        HtmlContent = "Thanks for your order!"
-                    };
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(model.ContactEmail));
-                    msg.SetClickTracking(false, false);
-                    await _sendGridClient.SendEmailAsync(msg);
+                    await _emailSender.SendEmailAsync(model.ContactEmail, "Receipt for order #" + order.ID, "Thanks for your order!");
 
                     return RedirectToAction("index", "receipt", new { id = order.ID });
                 }
