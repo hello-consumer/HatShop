@@ -131,24 +131,25 @@
             </fieldset>
         </div>
     </div>
-<div class="row">
-    <div class="col-12">
-        <div class="form-group">
-            <label for="card-number">Card Number</label>
-            <div id="card-number" class="form-control"></div>
-        </div>
-        <div class="form-group">
-            <label for="cvv">CVV</label>
-            <div id="cvv" class="form-control"></div>
-        </div>
-        <div class="form-group">
-            <label for="expiration-date">Expiration Date</label>
-            <div id="expiration-date" class="form-control"></div>
-        </div>
-    </div>
-</div>
     <div class="row">
         <div class="col-12">
+            <div class="form-group">
+                <label for="card-number">Card Number</label>
+                <div id="card-number" class="form-control"></div>
+            </div>
+            <div class="form-group">
+                <label for="cvv">CVV</label>
+                <div id="cvv" class="form-control"></div>
+            </div>
+            <div class="form-group">
+                <label for="expiration-date">Expiration Date</label>
+                <div id="expiration-date" class="form-control"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <input type="hidden" id="braintreeNonce" name="braintreeNonce" />
             <input type="submit" value="Place Order" class="btn btn-block btn-secondary" />
         </div>
     </div>
@@ -157,7 +158,7 @@
 @section Scripts{
     <script src="https://js.braintreegateway.com/web/3.44.0/js/client.min.js"></script>
     <script src="https://js.braintreegateway.com/web/3.44.0/js/hosted-fields.min.js"></script>
-<script type="text/javascript">
+    <script type="text/javascript">
     var clientToken = '@ViewData["clientToken"]';
 
 
@@ -212,21 +213,21 @@
             submit.removeAttribute('disabled');
 
             form.addEventListener('submit', function (event) {
-                event.preventDefault();
-
+                if (form.querySelector('#braintreeNonce').value === "") {
+                    event.preventDefault();
+                }
                 hostedFieldsInstance.tokenize(function (tokenizeErr, payload) {
                     if (tokenizeErr) {
                         console.error(tokenizeErr);
                         return;
                     }
 
-                    // If this was a real integration, this is where you would
-                    // send the nonce to your server.
-                    console.log('Got a nonce: ' + payload.nonce);
+                    form.querySelector('#braintreeNonce').value = payload.nonce;
+                    form.submit();
                 });
             }, false);
-        });
-    });
+                    });
+                });
 
     function validate(event, form) {
         if (form.checkValidity() === false) {
@@ -235,5 +236,5 @@
         }
         form.classList.add('was-validated');
     }
-</script>
+    </script>
 }
