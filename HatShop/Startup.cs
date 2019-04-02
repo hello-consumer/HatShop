@@ -66,6 +66,16 @@ namespace HatShop
                 );
             });
 
+services.AddTransient<Braintree.IBraintreeGateway>((s) =>
+{
+    return new Braintree.BraintreeGateway(
+        Configuration.GetValue<string>("Braintree:Environment"),
+        Configuration.GetValue<string>("Braintree:MerchantId"),
+        Configuration.GetValue<string>("Braintree:PublicKey"),
+        Configuration.GetValue<string>("Braintree:PrivateKey")
+    );
+});
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));

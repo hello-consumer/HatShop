@@ -18,19 +18,23 @@ namespace HatShop.Controllers
         private ApplicationDbContext _context;
         private UserManager<HatUser> _userManager;
         private IEmailSender _emailSender;
+        private Braintree.IBraintreeGateway _braintreeGateway;
 
         public CheckoutController(ApplicationDbContext context, UserManager<HatUser> userManager
-        , IEmailSender emailSender)
+        , IEmailSender emailSender, Braintree.IBraintreeGateway braintreeGateway)
         {
             this._context = context;
             this._userManager = userManager;
             this._emailSender = emailSender;
+            this._braintreeGateway = braintreeGateway;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+public async Task<IActionResult> Index()
+{
+    ViewData["clientToken"] = await _braintreeGateway.ClientToken.GenerateAsync();
+            
+    return View();
+}
 
         [HttpPost]
         public async Task<IActionResult> Index(CheckoutViewModel model)
